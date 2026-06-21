@@ -1,0 +1,39 @@
+{
+  "name": "ru-ru",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "gen-types": "wrangler types",
+    "gen-db": "drizzle-kit generate",
+    "gen-proto": "buf generate",
+    "dev-setup-db": "wrangler d1 migrations apply ru-ru --local",
+    "dev-wf-geosite": "wrangler workflows trigger sync-geosite --local",
+    "dev-wf-geoip": "wrangler workflows trigger sync-geoip --local",
+    "dev": "vite",
+    "build": "vite build",
+    "deploy": "vite build && wrangler d1 migrations apply ru-ru --remote && wrangler deploy"
+  },
+  "dependencies": {
+    "@bufbuild/protobuf": "^2.12.0",
+    "@hono/zod-validator": "^0.8.0",
+    "@zhexin/srs": "npm:@jsr/zhexin__srs",
+    "drizzle-orm": "^0.45.2",
+    "es-toolkit": "^1.47.1",
+    "hono": "^4.12.26",
+    "netip-ts": "^1.0.4",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@bufbuild/buf": "^1.71.0",
+    "@bufbuild/protoc-gen-es": "^2.12.0",
+    "@cloudflare/vite-plugin": "^1.42.1",
+    "@sveltejs/vite-plugin-svelte": "^7.1.2",
+    "@tailwindcss/vite": "^4.3.1",
+    "drizzle-kit": "^0.31.10",
+    "svelte": "^5.56.3",
+    "tailwindcss": "^4.3.1",
+    "vite": "^8.0.16",
+    "wrangler": "^4.103.0"
+  }
+}

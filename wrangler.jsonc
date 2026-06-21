@@ -1,0 +1,35 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "ru-ru",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-06-16",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "observability": {
+    "enabled": true,
+    "traces": {
+      "enabled": true,
+    },
+  },
+  "assets": {
+    "directory": "dist",
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "ru-ru",
+    },
+  ],
+  "workflows": [
+    {
+      "name": "sync-geosite",
+      "binding": "SyncGeoSite",
+      "class_name": "SyncGeoSite",
+    },
+    {
+      "name": "sync-geoip",
+      "binding": "SyncGeoIP",
+      "class_name": "SyncGeoIP",
+    },
+  ],
+}
