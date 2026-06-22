@@ -1,0 +1,211 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "id": "690cc31b-30cd-4faf-ab7e-cd90b1bb95be",
+  "prevIds": [
+    "00000000-0000-0000-0000-000000000000"
+  ],
+  "ddl": [
+    {
+      "name": "geoip",
+      "entityType": "tables"
+    },
+    {
+      "name": "geoip_new",
+      "entityType": "tables"
+    },
+    {
+      "name": "geosite",
+      "entityType": "tables"
+    },
+    {
+      "name": "geosite_new",
+      "entityType": "tables"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "tag",
+      "entityType": "columns",
+      "table": "geoip"
+    },
+    {
+      "type": "blob",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "start_ip",
+      "entityType": "columns",
+      "table": "geoip"
+    },
+    {
+      "type": "blob",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "end_ip",
+      "entityType": "columns",
+      "table": "geoip"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "prefix_length",
+      "entityType": "columns",
+      "table": "geoip"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "tag",
+      "entityType": "columns",
+      "table": "geoip_new"
+    },
+    {
+      "type": "blob",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "start_ip",
+      "entityType": "columns",
+      "table": "geoip_new"
+    },
+    {
+      "type": "blob",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "end_ip",
+      "entityType": "columns",
+      "table": "geoip_new"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "prefix_length",
+      "entityType": "columns",
+      "table": "geoip_new"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "tag",
+      "entityType": "columns",
+      "table": "geosite"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "format",
+      "entityType": "columns",
+      "table": "geosite"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "domain",
+      "entityType": "columns",
+      "table": "geosite"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "tag",
+      "entityType": "columns",
+      "table": "geosite_new"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "format",
+      "entityType": "columns",
+      "table": "geosite_new"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "domain",
+      "entityType": "columns",
+      "table": "geosite_new"
+    },
+    {
+      "columns": [
+        "tag",
+        "start_ip",
+        "prefix_length"
+      ],
+      "nameExplicit": false,
+      "name": "geoip_pk",
+      "entityType": "pks",
+      "table": "geoip"
+    },
+    {
+      "columns": [
+        "tag",
+        "start_ip",
+        "prefix_length"
+      ],
+      "nameExplicit": false,
+      "name": "geoip_new_pk",
+      "entityType": "pks",
+      "table": "geoip_new"
+    },
+    {
+      "columns": [
+        "tag",
+        "format",
+        "domain"
+      ],
+      "nameExplicit": false,
+      "name": "geosite_pk",
+      "entityType": "pks",
+      "table": "geosite"
+    },
+    {
+      "columns": [
+        "tag",
+        "format",
+        "domain"
+      ],
+      "nameExplicit": false,
+      "name": "geosite_new_pk",
+      "entityType": "pks",
+      "table": "geosite_new"
+    }
+  ],
+  "renames": []
+}

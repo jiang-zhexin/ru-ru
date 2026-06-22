@@ -18,6 +18,8 @@
     {
       "binding": "DB",
       "database_name": "ru-ru",
+      "migrations_dir": "migrations",
+      "migrations_pattern": "migrations/*/migration.sql",
     },
   ],
   "workflows": [

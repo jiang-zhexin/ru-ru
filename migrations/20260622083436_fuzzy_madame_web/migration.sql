@@ -3,7 +3,7 @@ CREATE TABLE `geoip` (
 	`start_ip` blob NOT NULL,
 	`end_ip` blob NOT NULL,
 	`prefix_length` integer NOT NULL,
-	PRIMARY KEY(`tag`, `start_ip`, `prefix_length`)
+	CONSTRAINT `geoip_pk` PRIMARY KEY(`tag`, `start_ip`, `prefix_length`)
 );
 --> statement-breakpoint
 CREATE TABLE `geoip_new` (
@@ -11,19 +11,19 @@ CREATE TABLE `geoip_new` (
 	`start_ip` blob NOT NULL,
 	`end_ip` blob NOT NULL,
 	`prefix_length` integer NOT NULL,
-	PRIMARY KEY(`tag`, `start_ip`, `prefix_length`)
+	CONSTRAINT `geoip_new_pk` PRIMARY KEY(`tag`, `start_ip`, `prefix_length`)
 );
 --> statement-breakpoint
 CREATE TABLE `geosite` (
 	`tag` text NOT NULL,
 	`format` text NOT NULL,
 	`domain` text NOT NULL,
-	PRIMARY KEY(`tag`, `format`, `domain`)
+	CONSTRAINT `geosite_pk` PRIMARY KEY(`tag`, `format`, `domain`)
 );
 --> statement-breakpoint
 CREATE TABLE `geosite_new` (
 	`tag` text NOT NULL,
 	`format` text NOT NULL,
 	`domain` text NOT NULL,
-	PRIMARY KEY(`tag`, `format`, `domain`)
+	CONSTRAINT `geosite_new_pk` PRIMARY KEY(`tag`, `format`, `domain`)
 );
