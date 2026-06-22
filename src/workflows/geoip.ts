@@ -1,5 +1,5 @@
 import { db } from "@/db/db.ts";
-import { geoipTableNew, geositeTableNew } from "@/db/schema.ts";
+import { geoipTableNew } from "@/db/schema.ts";
 import { GeoIPListSchema } from "@/gen/geoip_pb.ts";
 import { fromBinary } from "@bufbuild/protobuf";
 import {
@@ -50,7 +50,7 @@ export class SyncGeoIP extends WorkflowEntrypoint<Env, Params> {
 
     await step.do("update geoip db", async () => {
       await db.batch([
-        db.delete(geositeTableNew),
+        db.delete(geoipTableNew),
         ...chunk(results, 25).map((r) =>
           db.insert(geoipTableNew).values(r).onConflictDoNothing()
         ),

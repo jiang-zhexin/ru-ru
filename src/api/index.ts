@@ -5,7 +5,7 @@ import { prettyJSON } from "hono/pretty-json";
 
 const api = new Hono();
 
-if (env.PRETTY_JSON) api.use(prettyJSON({ force: true }));
+if (env.DEV) api.use(prettyJSON({ force: true }));
 
 api.route("/v1", v1);
 

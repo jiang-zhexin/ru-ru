@@ -10,6 +10,7 @@ import {
 } from "cloudflare:workers";
 import { sql } from "drizzle-orm";
 import { chunk } from "es-toolkit/array";
+import { sumBy } from "es-toolkit/math";
 
 type Params = never;
 
@@ -48,14 +49,38 @@ export class SyncGeoSite extends WorkflowEntrypoint<Env, Params> {
 
     console.log(`all geosite: ${results.length}`);
 
-    await step.do("update geosite db", async () => {
-      await db.batch([
-        db.delete(geositeTableNew),
-        ...chunk(results, 33).map((r) =>
-          db.insert(geositeTableNew).values(r).onConflictDoNothing()
-        ),
-      ]);
-    });
+    /**
+     * because maximum bound parameters per query is 100.
+     * https://developers.cloudflare.com/d1/platform/limits/
+     *
+     * 33 is 100/3
+     */
+    const MAX_CHUNK = 33;
+    const batches = chunk(results, MAX_CHUNK * 100);
+
+    let rows_written = 0;
+
+    for (const [index, value] of batches.entries()) {
+      rows_written += await step.do(
+        `insert geosite db, id: ${index}`,
+        async () => {
+          const batchPromises = chunk(value, MAX_CHUNK).map((r) =>
+            db.insert(geositeTableNew).values(r).onConflictDoNothing()
+          );
+          type T = typeof batchPromises[number];
+          const batchRes = await db.batch(batchPromises as [T, ...T[]]);
+
+          return sumBy(batchRes, (item) => item.meta.rows_written);
+        },
+      );
+
+      if (!this.env.DEV && rows_written > 80000) {
+        await step.sleep(`now is ${index}, sleep 1 day then continue`, "1 day");
+        rows_written = 0;
+      }
+    }
+
+    console.log("insert geosite success");
 
     await step.do("rotation table", async () => {
       await db.batch([
@@ -66,5 +91,13 @@ export class SyncGeoSite extends WorkflowEntrypoint<Env, Params> {
     });
 
     console.log("rotation geosite success");
+
+    if (!this.env.DEV) await step.sleep("sleep 1 day then clearup", "1 day");
+
+    await step.do("clear tmp table", async () => {
+      await db.delete(geositeTableNew);
+    });
+
+    console.log("clear tmp table success");
   }
 }
