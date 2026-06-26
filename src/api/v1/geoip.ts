@@ -28,20 +28,30 @@ const geoip = new Hono()
     "/:filename{.+\\.json}",
     zValidator("query", geoipFilter),
     async (c) => {
+      const { filename } = c.req.param();
       const q = c.req.valid("query");
       const results = await filter(q);
       const ruleSet = toRuleSet(results, q.v);
-      return c.json<RuleSet>(ruleSet);
+      return c.json<RuleSet>(ruleSet, {
+        headers: {
+          "Content-Disposition": `attachment; filename="${filename}"`,
+        },
+      });
     },
   ).get(
     "/:filename{.+\\.srs}",
     zValidator("query", geoipFilter),
     async (c) => {
+      const { filename } = c.req.param();
       const q = c.req.valid("query");
       const results = await filter(q);
       const ruleSet = toRuleSet(results, q.v);
       const srs = writeSrs(ruleSet);
-      return c.newResponse(srs);
+      return c.newResponse(srs, {
+        headers: {
+          "Content-Disposition": `attachment; filename="${filename}"`,
+        },
+      });
     },
   );
 
