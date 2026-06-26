@@ -14,12 +14,10 @@
   "assets": {
     "directory": "dist",
   },
-  "d1_databases": [
+  "hyperdrive": [
     {
-      "binding": "DB",
-      "database_name": "ru-ru",
-      "migrations_dir": "migrations",
-      "migrations_pattern": "migrations/*/migration.sql",
+      "binding": "HYPERDRIVE",
+      "id": "dc3591e6c46549019ba3d3575ff6d4f4",
     },
   ],
   "workflows": [

@@ -1,17 +1,24 @@
 import {
-  blob,
+  bytea,
   integer,
+  pgEnum,
+  pgTable,
   primaryKey,
-  sqliteTable,
   text,
-} from "drizzle-orm/sqlite-core";
+} from "drizzle-orm/pg-core";
 
-export const geositeTable = sqliteTable(
+export const format = pgEnum("format_enum", [
+  "suffix",
+  "full",
+  "keyword",
+  "regexp",
+]);
+
+export const geositeTable = pgTable(
   "geosite",
   {
     tag: text("tag").notNull(),
-    format: text("format", { enum: ["suffix", "full", "keyword", "regexp"] })
-      .notNull(),
+    format: format("format").notNull(),
     domain: text("domain").notNull(),
   },
   (table) => [
@@ -19,38 +26,12 @@ export const geositeTable = sqliteTable(
   ],
 );
 
-export const geositeTableNew = sqliteTable(
-  "geosite_new",
-  {
-    tag: text("tag").notNull(),
-    format: text("format", { enum: ["suffix", "full", "keyword", "regexp"] })
-      .notNull(),
-    domain: text("domain").notNull(),
-  },
-  (table) => [
-    primaryKey({ columns: [table.tag, table.format, table.domain] }),
-  ],
-);
-
-export const geoipTable = sqliteTable(
+export const geoipTable = pgTable(
   "geoip",
   {
     tag: text("tag").notNull(),
-    startIp: blob("start_ip", { mode: "buffer" }).notNull(),
-    endIp: blob("end_ip", { mode: "buffer" }).notNull(),
-    prefixLength: integer("prefix_length").notNull(),
-  },
-  (table) => [
-    primaryKey({ columns: [table.tag, table.startIp, table.prefixLength] }),
-  ],
-);
-
-export const geoipTableNew = sqliteTable(
-  "geoip_new",
-  {
-    tag: text("tag").notNull(),
-    startIp: blob("start_ip", { mode: "buffer" }).notNull(),
-    endIp: blob("end_ip", { mode: "buffer" }).notNull(),
+    startIp: bytea("start_ip").notNull(),
+    endIp: bytea("end_ip").notNull(),
     prefixLength: integer("prefix_length").notNull(),
   },
   (table) => [

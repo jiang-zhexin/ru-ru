@@ -1,5 +1,5 @@
 import { db } from "@/db/db.ts";
-import { geositeTableNew } from "@/db/schema.ts";
+import { geositeTable } from "@/db/schema.ts";
 import { GeoSiteListSchema } from "@/gen/geosite_pb.ts";
 import { domain_type_to_str } from "@/utils/domain_type.ts";
 import { fromBinary } from "@bufbuild/protobuf";
@@ -10,7 +10,6 @@ import {
 } from "cloudflare:workers";
 import { sql } from "drizzle-orm";
 import { chunk } from "es-toolkit/array";
-import { sumBy } from "es-toolkit/math";
 
 type Params = never;
 
@@ -45,59 +44,22 @@ export class SyncGeoSite extends WorkflowEntrypoint<Env, Params> {
 
         return r;
       })
-    ) satisfies typeof geositeTableNew.$inferInsert[];
+    ) satisfies typeof geositeTable.$inferInsert[];
 
     console.log(`all geosite: ${results.length}`);
 
-    /**
-     * because maximum bound parameters per query is 100.
-     * https://developers.cloudflare.com/d1/platform/limits/
-     *
-     * 33 is 100/3
-     */
-    const MAX_CHUNK = 33;
-    const batches = chunk(results, MAX_CHUNK * 100);
+    const MAX_CHUNK = 5000;
+    const batches = chunk(results, MAX_CHUNK);
 
-    let rows_written = 0;
-
-    for (const [index, value] of batches.entries()) {
-      rows_written += await step.do(
-        `insert geosite db, id: ${index}`,
-        async () => {
-          const batchPromises = chunk(value, MAX_CHUNK).map((r) =>
-            db.insert(geositeTableNew).values(r).onConflictDoNothing()
-          );
-          type T = typeof batchPromises[number];
-          const batchRes = await db.batch(batchPromises as [T, ...T[]]);
-
-          return sumBy(batchRes, (item) => item.meta.rows_written);
-        },
-      );
-
-      if (!this.env.DEV && rows_written > 80000) {
-        await step.sleep(`now is ${index}, sleep 1 day then continue`, "1 day");
-        rows_written = 0;
-      }
-    }
-
-    console.log("insert geosite success");
-
-    await step.do("rotation table", async () => {
-      await db.batch([
-        db.run(sql`ALTER TABLE geosite RENAME TO geosite_old;`),
-        db.run(sql`ALTER TABLE geosite_new RENAME TO geosite;`),
-        db.run(sql`ALTER TABLE geosite_old RENAME TO geosite_new;`),
-      ]);
+    await step.do("atomic overwrite geosite", async () => {
+      await db().transaction(async (tx) => {
+        await tx.execute(sql`TRUNCATE TABLE ${geositeTable};`);
+        for (const value of batches) {
+          await tx.insert(geositeTable).values(value).onConflictDoNothing();
+        }
+      });
     });
 
-    console.log("rotation geosite success");
-
-    if (!this.env.DEV) await step.sleep("sleep 1 day then clearup", "1 day");
-
-    await step.do("clear tmp table", async () => {
-      await db.delete(geositeTableNew);
-    });
-
-    console.log("clear tmp table success");
+    console.log("overwrite geosite success");
   }
 }

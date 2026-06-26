@@ -1,0 +1,149 @@
+{
+  "version": "8",
+  "dialect": "postgres",
+  "id": "ce7e43dc-2d3a-4b42-bbe6-50a411ee8e5b",
+  "prevIds": [
+    "00000000-0000-0000-0000-000000000000"
+  ],
+  "ddl": [
+    {
+      "values": [
+        "suffix",
+        "full",
+        "keyword",
+        "regexp"
+      ],
+      "name": "format_enum",
+      "entityType": "enums",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "geoip",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "geosite",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "tag",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "geoip"
+    },
+    {
+      "type": "bytea",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "start_ip",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "geoip"
+    },
+    {
+      "type": "bytea",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "end_ip",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "geoip"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "prefix_length",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "geoip"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "tag",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "geosite"
+    },
+    {
+      "type": "format_enum",
+      "typeSchema": "public",
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "format",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "geosite"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "domain",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "geosite"
+    },
+    {
+      "columns": [
+        "tag",
+        "start_ip",
+        "prefix_length"
+      ],
+      "nameExplicit": false,
+      "name": "geoip_pkey",
+      "entityType": "pks",
+      "schema": "public",
+      "table": "geoip"
+    },
+    {
+      "columns": [
+        "tag",
+        "format",
+        "domain"
+      ],
+      "nameExplicit": false,
+      "name": "geosite_pkey",
+      "entityType": "pks",
+      "schema": "public",
+      "table": "geosite"
+    }
+  ],
+  "renames": []
+}

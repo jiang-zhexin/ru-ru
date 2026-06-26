@@ -17,7 +17,7 @@ const geoip = new Hono()
     async (c) => c.json<string[]>(await filter(c.req.valid("query"))),
   )
   .get("/tags", async (c) => {
-    const uniqueTags = await db
+    const uniqueTags = await db()
       .selectDistinct({ tag: geoipTable.tag })
       .from(geoipTable)
       .then((rows) => rows.map((r) => r.tag));
@@ -49,7 +49,7 @@ export type geoip = typeof geoip;
 export default geoip;
 
 async function filter(q: GeoipFilterParams): Promise<string[]> {
-  const results = await db
+  const results = await db()
     .select()
     .from(geoipTable)
     .where(

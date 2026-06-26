@@ -1,5 +1,5 @@
 import { db } from "@/db/db.ts";
-import { geoipTableNew } from "@/db/schema.ts";
+import { geoipTable } from "@/db/schema.ts";
 import { GeoIPListSchema } from "@/gen/geoip_pb.ts";
 import { fromBinary } from "@bufbuild/protobuf";
 import {
@@ -44,27 +44,22 @@ export class SyncGeoIP extends WorkflowEntrypoint<Env, Params> {
           prefixLength: c.prefix,
         };
       })
-    ) satisfies typeof geoipTableNew.$inferInsert[];
+    ) satisfies typeof geoipTable.$inferInsert[];
 
     console.log(`all geoip: ${results.length}`);
 
-    await step.do("update geoip db", async () => {
-      await db.batch([
-        db.delete(geoipTableNew),
-        ...chunk(results, 25).map((r) =>
-          db.insert(geoipTableNew).values(r).onConflictDoNothing()
-        ),
-      ]);
+    const MAX_CHUNK = 5000;
+    const batches = chunk(results, MAX_CHUNK);
+
+    await step.do("atomic overwrite geoip", async () => {
+      await db().transaction(async (tx) => {
+        await tx.execute(sql`TRUNCATE TABLE ${geoipTable};`);
+        for (const value of batches) {
+          await tx.insert(geoipTable).values(value).onConflictDoNothing();
+        }
+      });
     });
 
-    await step.do("rotation table", async () => {
-      await db.batch([
-        db.run(sql`ALTER TABLE geoip RENAME TO geoip_old;`),
-        db.run(sql`ALTER TABLE geoip_new RENAME TO geoip;`),
-        db.run(sql`ALTER TABLE geoip_old RENAME TO geoip_new;`),
-      ]);
-    });
-
-    console.log("rotation geoip success");
+    console.log("overwrite geoip success");
   }
 }

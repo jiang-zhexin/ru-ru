@@ -11,7 +11,7 @@ import { geositeFilter } from "@/validator/geosite.ts";
 import { zValidator } from "@hono/zod-validator";
 import { type RuleSet, writeSrs } from "@zhexin/srs";
 import { and, inArray, notInArray, type SQL, sql } from "drizzle-orm";
-import { except, union } from "drizzle-orm/sqlite-core";
+import { except, union } from "drizzle-orm/pg-core";
 import { groupBy } from "es-toolkit/array";
 import { Hono } from "hono";
 
@@ -19,10 +19,14 @@ const geosite = new Hono()
   .get(
     "/",
     zValidator("query", geositeFilter),
-    async (c) => c.json<RawDomain>(await filter(c.req.valid("query"))),
+    async (c) => {
+      const q = c.req.valid("query");
+      const results = await filter(q);
+      return c.json<RawDomain>(results);
+    },
   )
   .get("/tags", async (c) => {
-    const uniqueTags = await db
+    const uniqueTags = await db()
       .selectDistinct({ tag: geositeTable.tag })
       .from(geositeTable)
       .then((rows) => rows.map((r) => r.tag));
@@ -54,7 +58,7 @@ export type geosite = typeof geosite;
 export default geosite;
 
 async function filter(q: GeositeFilterParams): Promise<RawDomain> {
-  const baseQuery = db
+  const baseQuery = db()
     .select({ format: geositeTable.format, domain: geositeTable.domain })
     .from(geositeTable)
     .where(
@@ -71,7 +75,7 @@ async function filter(q: GeositeFilterParams): Promise<RawDomain> {
   if (q.dk) includeSqlChunks.push(...q.dk.map((d) => sql`('keyword', ${d})`));
   if (q.dr) includeSqlChunks.push(...q.dr.map((d) => sql`('regexp', ${d})`));
 
-  const includeQuery = db
+  const includeQuery = db()
     .select({ format: sql<Format>`column1`, domain: sql<string>`column2` })
     .from(
       sql`(VALUES ${sql.join(includeSqlChunks, sql.raw(`, `))})`,
@@ -83,7 +87,7 @@ async function filter(q: GeositeFilterParams): Promise<RawDomain> {
   if (q.edk) excludeSqlChunks.push(...q.edk.map((d) => sql`('keyword', ${d})`));
   if (q.edr) excludeSqlChunks.push(...q.edr.map((d) => sql`('regexp', ${d})`));
 
-  const excludeQuery = db
+  const excludeQuery = db()
     .select({ format: sql<Format>`column1`, domain: sql<string>`column2` })
     .from(
       sql`(VALUES ${sql.join(excludeSqlChunks, sql.raw(`, `))})`,
