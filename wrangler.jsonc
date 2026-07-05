@@ -4,10 +4,13 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-06-16",
   "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
   "placement": {
     "region": "aws:ap-southeast-1",
   },
-  "workers_dev": false,
+  "cache": {
+    "enabled": true,
+  },
   "observability": {
     "enabled": true,
     "traces": {
