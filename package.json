@@ -30,6 +30,7 @@
     "@bufbuild/buf": "^1.71.0",
     "@bufbuild/protoc-gen-es": "^2.12.1",
     "@cloudflare/vite-plugin": "^1.43.0",
+    "@humanspeak/svelte-headless-table": "^6.0.11",
     "@sveltejs/vite-plugin-svelte": "^7.1.4",
     "@tailwindcss/vite": "^4.3.2",
     "@types/pg": "^8.20.0",
