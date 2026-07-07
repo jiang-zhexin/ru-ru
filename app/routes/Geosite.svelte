@@ -74,7 +74,6 @@
                 <p>至少选择一个标签 (tags)！</p>
             {:else}
                 <div class="w-full flex flex-col gap-2">
-                    <p class="text-sm">在 sing-box 中使用：</p>
                     <UrlDisplay url={url.toString()} name={params.name} />
                     <PreviewTable {results} />
                 </div>
