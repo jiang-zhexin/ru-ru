@@ -154,11 +154,11 @@
     popover
     class="fixed inset-0 m-auto px-8 py-6 rounded dark:bg-gray-800 dark:text-white backdrop:bg-black/40"
 >
-    <p>是否删除 {params.name}？</p>
+    <p>是否删除 <span class="font-mono">{params.name}</span>？</p>
     <button
         popovertarget="deletePopover"
         popovertargetaction="hide"
-        class="mt-4 px-4 py-2 bg-sky-500 hover:bg-sky-400 dark:hover:bg-sky-600 rounded"
+        class="block ml-auto mt-4 px-4 py-2 bg-sky-500 hover:bg-sky-400 dark:hover:bg-sky-600 rounded"
         onclick={(e) => {
             if (paramarray.length > 1) {
                 paramarray.splice(cursor, 1);
@@ -166,6 +166,8 @@
             } else {
                 paramarray[cursor] = structuredClone(DEFAULT_PARAMS);
             }
-        }}>确认</button
+        }}
     >
+        确认
+    </button>
 </dialog>
