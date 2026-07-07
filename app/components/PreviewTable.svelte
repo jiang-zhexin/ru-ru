@@ -8,7 +8,7 @@
     <p class="text-sm">No rules match the current filters.</p>
 {:else}
     <div
-        class="overflow-y-auto max-h-180 scrollbar-thumb-slate-700 rounded-lg border border-gray-300 shadow-sm dark:border-gray-600 content-visibility-auto [contain-intrinsic-size:0_500px]"
+        class="overflow-y-auto max-h-180 dark:scrollbar-thumb-slate-700 rounded-lg border border-gray-300 shadow-sm dark:border-gray-600 content-visibility-auto [contain-intrinsic-size:0_500px]"
     >
         <table
             class="min-w-full divide-y-2 divide-gray-200 dark:divide-gray-700"
