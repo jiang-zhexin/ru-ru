@@ -81,24 +81,30 @@ async function filter(q: GeositeFilterParams): Promise<RawDomain> {
 
   const includeSqlChunks: SQL[] = [];
   if (q.d) includeSqlChunks.push(...q.d.map((d) => sql`('full', ${d})`));
-  if (q.ds) includeSqlChunks.push(...q.ds.map((d) => sql`('domain', ${d})`));
+  if (q.ds) includeSqlChunks.push(...q.ds.map((d) => sql`('suffix', ${d})`));
   if (q.dk) includeSqlChunks.push(...q.dk.map((d) => sql`('keyword', ${d})`));
   if (q.dr) includeSqlChunks.push(...q.dr.map((d) => sql`('regexp', ${d})`));
 
   const includeQuery = db()
-    .select({ format: sql<Format>`column1`, domain: sql<string>`column2` })
+    .select({
+      format: sql<Format>`column1::format_enum`.as("format"),
+      domain: sql<string>`column2`.as("domain"),
+    })
     .from(
       sql`(VALUES ${sql.join(includeSqlChunks, sql.raw(`, `))})`,
     );
 
   const excludeSqlChunks: SQL[] = [];
   if (q.ed) excludeSqlChunks.push(...q.ed.map((d) => sql`('full', ${d})`));
-  if (q.eds) excludeSqlChunks.push(...q.eds.map((d) => sql`('domain', ${d})`));
+  if (q.eds) excludeSqlChunks.push(...q.eds.map((d) => sql`('suffix', ${d})`));
   if (q.edk) excludeSqlChunks.push(...q.edk.map((d) => sql`('keyword', ${d})`));
   if (q.edr) excludeSqlChunks.push(...q.edr.map((d) => sql`('regexp', ${d})`));
 
   const excludeQuery = db()
-    .select({ format: sql<Format>`column1`, domain: sql<string>`column2` })
+    .select({
+      format: sql<Format>`column1::format_enum`.as("format"),
+      domain: sql<string>`column2`.as("domain"),
+    })
     .from(
       sql`(VALUES ${sql.join(excludeSqlChunks, sql.raw(`, `))})`,
     );
