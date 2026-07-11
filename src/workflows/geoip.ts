@@ -29,7 +29,7 @@ export class SyncGeoIP extends WorkflowEntrypoint<Env, Params> {
       await new Response(geoipBin).bytes(),
     );
 
-    const results = geoipList.entry.flatMap(({ countryCode, cidr }) =>
+    let results = geoipList.entry.flatMap(({ countryCode, cidr }) =>
       cidr.map((c) => {
         const addr = c.ip.length === 4
           ? Address.fromIPv4Bytes(c.ip)
@@ -38,13 +38,34 @@ export class SyncGeoIP extends WorkflowEntrypoint<Env, Params> {
         const { from, to } = AddressPrefix.from(addr, c.prefix).getRanges();
 
         return {
-          tag: countryCode,
+          tag: countryCode.toLowerCase(),
           startIp: Buffer.from(Address.parseAddress(from).toByteArray()),
           endIp: Buffer.from(Address.parseAddress(to).toByteArray()),
           prefixLength: c.prefix,
-        };
+        } satisfies typeof geoipTable.$inferInsert;
       })
-    ) satisfies typeof geoipTable.$inferInsert[];
+    );
+
+    const telegramCidr = await step.do("fetch telegram cidr", async () => {
+      const response = await fetch(
+        "https://core.telegram.org/resources/cidr.txt",
+      );
+      if (!response.ok) throw new Error("can not fetch geoip");
+      return await response.text();
+    });
+
+    results = results.concat(
+      telegramCidr.trimEnd().split("\n").map((cidr) => {
+        const prefix = AddressPrefix.parsePrefix(cidr);
+        const { from, to } = prefix.getRanges();
+        return {
+          tag: "telegram",
+          startIp: Buffer.from(Address.parseAddress(from).toByteArray()),
+          endIp: Buffer.from(Address.parseAddress(to).toByteArray()),
+          prefixLength: prefix.getBits(),
+        };
+      }),
+    );
 
     console.log(`all geoip: ${results.length}`);
 

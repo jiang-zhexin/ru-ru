@@ -14,7 +14,11 @@ const geoip = new Hono()
   .get(
     "/",
     zValidator("query", geoipFilter),
-    async (c) => c.json<string[]>(await filter(c.req.valid("query"))),
+    async (c) => {
+      const q = c.req.valid("query");
+      const results = await filter(q);
+      return c.json<string[]>(results);
+    },
   )
   .get("/tags", async (c) => {
     const uniqueTags = await db()
