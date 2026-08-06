@@ -51,7 +51,15 @@
 {#if results.length === 0}
     <p class="text-sm">No rules match the current filters.</p>
 {:else}
-    <div class="h-160">
+    <div
+        class="h-160"
+        onwheel={(e) => {
+            e.preventDefault();
+            if (e.deltaY > 0 && table.getCanNextPage()) table.nextPage();
+            else if (e.deltaY < 0 && table.getCanPreviousPage())
+                table.previousPage();
+        }}
+    >
         <table class="border-l-2 w-full">
             <thead class="text-left bg-muted">
                 {#each table.getHeaderGroups() as headerGroup (headerGroup.id)}
@@ -81,7 +89,7 @@
     </div>
     <div class="border-l-2 px-2 flex">
         <input
-            class="outline-none border-b"
+            class="outline-none border-b placeholder:text-foreground"
             type="text"
             value={table.atoms.globalFilter.get() ?? ""}
             oninput={(e) =>
