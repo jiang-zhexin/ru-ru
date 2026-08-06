@@ -1,101 +1,106 @@
 <script lang="ts">
-    import type { RawDomain } from "@/types/geosite.ts";
     import {
+        createPaginatedRowModel,
         createTable,
-        Render,
-        Subscribe,
-    } from "@humanspeak/svelte-headless-table";
-    import { addVirtualScroll } from "@humanspeak/svelte-headless-table/plugins";
-    import { writable } from "svelte/store";
+        FlexRender,
+        rowPaginationFeature,
+        columnFilteringFeature,
+        globalFilteringFeature,
+        createFilteredRowModel,
+        filterFn_includesString,
+        tableFeatures,
+    } from "@tanstack/svelte-table";
+    import type { ColumnDef } from "@tanstack/svelte-table";
+    import type { RawDomain } from "@/types/geosite.ts";
 
     let { results }: { results: RawDomain } = $props();
 
-    // svelte-ignore state_referenced_locally
-    const table = createTable(writable(results), {
-        virtualScroll: addVirtualScroll({
-            estimatedRowHeight: 48,
-            bufferSize: 10,
-        }),
+    const features = tableFeatures({
+        rowPaginationFeature,
+        paginatedRowModel: createPaginatedRowModel(),
+        columnFilteringFeature,
+        globalFilteringFeature,
+        filteredRowModel: createFilteredRowModel(),
+        filterFns: { includesString: filterFn_includesString },
     });
-    const columns = table.createColumns([
-        table.column({ header: "类型 (type)", accessor: "format" }),
-        table.column({ header: "域名 (domain)", accessor: "domain" }),
-    ]);
 
-    const {
-        headerRows,
-        pageRows,
-        tableAttrs,
-        tableBodyAttrs,
-        pluginStates,
-        visibleColumns,
-    } = table.createViewModel(columns);
+    const columns: Array<ColumnDef<typeof features, RawDomain[number]>> = [
+        {
+            accessorFn: (row) => row.format,
+            header: "类型 (type)",
+            cell: (info) => info.getValue(),
+        },
+        {
+            accessorFn: (row) => row.domain,
+            header: "域名 (domain)",
+            cell: (info) => info.getValue(),
+        },
+    ];
 
-    const {
-        virtualScroll,
-        topSpacerHeight,
-        bottomSpacerHeight,
-        measureRowAction,
-    } = pluginStates.virtualScroll;
+    const table = createTable({
+        features,
+        columns,
+        get data() {
+            return results;
+        },
+    });
+    const pagination = $derived(table.atoms.pagination.get());
+    table.setPageSize(15);
 </script>
 
 {#if results.length === 0}
     <p class="text-sm">No rules match the current filters.</p>
 {:else}
-    <div
-        class="overflow-y-auto max-h-180 scrollbar-thumb-muted-foreground border-l-2 shadow-sm content-visibility-auto [contain-intrinsic-size:0_500px]"
-        use:virtualScroll
-    >
-        <table class="min-w-full divide-border" {...$tableAttrs}>
-            <thead class="ltr:text-left rtl:text-right sticky top-0 bg-muted">
-                {#each $headerRows as headerRow (headerRow.id)}
-                    <tr class="*:font-medium">
-                        {#each headerRow.cells as cell (cell.id)}
-                            <Subscribe attrs={cell.attrs()} let:attrs>
-                                <th class="px-3 py-2">
-                                    <Render of={cell.render()} /></th
-                                >
-                            </Subscribe>
+    <div class="h-160">
+        <table class="border-l-2 w-full">
+            <thead class="text-left bg-muted">
+                {#each table.getHeaderGroups() as headerGroup (headerGroup.id)}
+                    <tr>
+                        {#each headerGroup.headers as header (header.id)}
+                            <th class="px-3 py-2 w-1/2">
+                                {#if !header.isPlaceholder}
+                                    <FlexRender {header} />
+                                {/if}
+                            </th>
                         {/each}
                     </tr>
                 {/each}
             </thead>
-            <tbody class="divide-border" {...$tableBodyAttrs}>
-                {#if $topSpacerHeight > 0}
+            <tbody>
+                {#each table.getRowModel().rows as row (row.id)}
                     <tr>
-                        <td
-                            colspan={$visibleColumns.length}
-                            style="height: {$topSpacerHeight}px; padding: 0; border: none;"
-                        ></td>
+                        {#each row.getAllCells() as cell (cell.id)}
+                            <td class="px-3 py-2">
+                                <FlexRender {cell} />
+                            </td>
+                        {/each}
                     </tr>
-                {/if}
-
-                {#each $pageRows as row (row.id)}
-                    <Subscribe attrs={row.attrs()} let:attrs>
-                        <tr
-                            class="*:first:font-medium"
-                            use:measureRowAction={row.id}
-                        >
-                            {#each row.cells as cell (cell.id)}
-                                <Subscribe attrs={cell.attrs()} let:attrs>
-                                    <td class="px-3 py-2">
-                                        <Render of={cell.render()} />
-                                    </td>
-                                </Subscribe>
-                            {/each}
-                        </tr>
-                    </Subscribe>
                 {/each}
-
-                {#if $bottomSpacerHeight > 0}
-                    <tr>
-                        <td
-                            colspan={$visibleColumns.length}
-                            style="height: {$bottomSpacerHeight}px; padding: 0; border: none;"
-                        ></td>
-                    </tr>
-                {/if}
             </tbody>
         </table>
+    </div>
+    <div class="border-l-2 px-2 flex">
+        <input
+            class="outline-none border-b"
+            type="text"
+            value={table.atoms.globalFilter.get() ?? ""}
+            oninput={(e) =>
+                table.setGlobalFilter((e.target as HTMLInputElement).value)}
+            placeholder="Filter Domain..."
+        />
+
+        <input
+            type="number"
+            class="outline-none border-b ml-auto"
+            min="1"
+            max={table.getPageCount()}
+            value={pagination.pageIndex + 1}
+            oninput={(e: Event) => {
+                const page = (e.target as HTMLInputElement).value
+                    ? Number((e.target as HTMLInputElement).value) - 1
+                    : 0;
+                table.setPageIndex(page);
+            }}
+        />/ {table.getPageCount().toLocaleString()}
     </div>
 {/if}

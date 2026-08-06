@@ -17,6 +17,7 @@
   "dependencies": {
     "@bufbuild/protobuf": "^2.13.0",
     "@hono/zod-validator": "^0.8.0",
+    "@tanstack/svelte-table": "^9.0.0",
     "@zhexin/srs": "npm:@jsr/zhexin__srs",
     "drizzle-orm": "^1.0.0-rc.4-de6c356",
     "es-toolkit": "^1.50.0",
@@ -30,7 +31,6 @@
     "@bufbuild/buf": "^1.72.0",
     "@bufbuild/protoc-gen-es": "^2.13.0",
     "@cloudflare/vite-plugin": "^1.50.0",
-    "@humanspeak/svelte-headless-table": "^6.0.12",
     "@sveltejs/vite-plugin-svelte": "^7.2.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/pg": "^8.20.4",
