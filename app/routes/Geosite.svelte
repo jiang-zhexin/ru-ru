@@ -62,7 +62,7 @@
 </script>
 
 <div class="flex flex-col lg:flex-row gap-4 flex-1">
-    <aside class="lg:w-85 shrink-0">
+    <aside class="lg:w-90 shrink-0">
         <FilterForm bind:paramarray bind:cursor bind:params />
     </aside>
 

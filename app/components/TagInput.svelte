@@ -2,18 +2,14 @@
     let {
         id,
         items = $bindable(),
-        placeholder,
         datalist,
     }: {
         id: string;
         items: string[];
-        placeholder?: string;
         datalist?: string[];
     } = $props();
 
     let input = $state("");
-
-    placeholder = "Enter 以键入";
 
     function addItem(ev: KeyboardEvent) {
         if (ev.key !== "Enter") return;
@@ -31,18 +27,18 @@
     </span>
     <div>
         <input
-            {placeholder}
+            placeholder="Enter 以键入"
             bind:value={input}
             onkeydown={addItem}
             list={id}
-            class="my-1 h-6 w-full rounded px-1.5 border bg-gray-200 border-gray-300 dark:border-gray-600 dark:bg-gray-900 text-sm placeholder:text-xs text-justify"
+            class="my-1 h-6 w-full px-1.5 border-b outline-none text-sm placeholder:text-xs text-justify"
         />
 
         {#each items as tag}
             <button
                 type="button"
                 onclick={() => (items = items.filter((t) => t !== tag))}
-                class="m-0.5 px-1 rounded-md cursor-pointer bg-gray-300 dark:bg-gray-600"
+                class="m-0.5 px-1 py-0.5 cursor-pointer bg-muted text-sm whitespace-nowrap"
             >
                 {tag} &times;
             </button>

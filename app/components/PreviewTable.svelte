@@ -43,18 +43,13 @@
     <p class="text-sm">No rules match the current filters.</p>
 {:else}
     <div
-        class="overflow-y-auto max-h-180 dark:scrollbar-thumb-slate-700 rounded-lg border border-gray-300 shadow-sm dark:border-gray-600 content-visibility-auto [contain-intrinsic-size:0_500px]"
+        class="overflow-y-auto max-h-180 scrollbar-thumb-muted-foreground border-l-2 shadow-sm content-visibility-auto [contain-intrinsic-size:0_500px]"
         use:virtualScroll
     >
-        <table
-            class="min-w-full divide-y-2 divide-gray-200 dark:divide-gray-700"
-            {...$tableAttrs}
-        >
-            <thead
-                class="ltr:text-left rtl:text-right sticky top-0 dark:bg-gray-800 bg-white"
-            >
+        <table class="min-w-full divide-border" {...$tableAttrs}>
+            <thead class="ltr:text-left rtl:text-right sticky top-0 bg-muted">
                 {#each $headerRows as headerRow (headerRow.id)}
-                    <tr class="*:font-medium *:text-gray-900 dark:*:text-white">
+                    <tr class="*:font-medium">
                         {#each headerRow.cells as cell (cell.id)}
                             <Subscribe attrs={cell.attrs()} let:attrs>
                                 <th class="px-3 py-2">
@@ -65,10 +60,7 @@
                     </tr>
                 {/each}
             </thead>
-            <tbody
-                class="divide-y divide-gray-200 dark:divide-gray-700"
-                {...$tableBodyAttrs}
-            >
+            <tbody class="divide-border" {...$tableBodyAttrs}>
                 {#if $topSpacerHeight > 0}
                     <tr>
                         <td
@@ -81,7 +73,7 @@
                 {#each $pageRows as row (row.id)}
                     <Subscribe attrs={row.attrs()} let:attrs>
                         <tr
-                            class="*:text-gray-900 *:first:font-medium dark:*:text-white"
+                            class="*:first:font-medium"
                             use:measureRowAction={row.id}
                         >
                             {#each row.cells as cell (cell.id)}

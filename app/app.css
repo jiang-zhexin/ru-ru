@@ -1,3 +1,45 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Register design tokens for Tailwind v4 */
+@theme {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-border: var(--border);
+}
+
+@layer base {
+    *,
+    ::before,
+    ::after {
+        border-color: var(--color-border);
+    }
+}
+
+/* Light theme values */
+:root,
+.light {
+    --background: oklch(0.98 0.02 94);
+    --foreground: oklch(0.1642 0.0307 96.5);
+    --accent: oklch(0.7 0.13 285);
+    --accent-foreground: oklch(0.98 0.02 94);
+    --muted: oklch(0.8945 0 0);
+    --muted-foreground: oklch(0.551 0.0234 264.36);
+    --border: oklch(0.8331 0.0266 308.11);
+}
+
+/* Dark theme values */
+.dark {
+    --background: oklch(0.2744 0.031 268.43);
+    --foreground: oklch(0.9455 0.0087 264.52);
+    --accent: oklch(0.702253 0.200362 45.0447);
+    --accent-foreground: oklch(1 0 0);
+    --muted: oklch(0.3734 0.0588 269.36);
+    --muted-foreground: oklch(0.7833 0.0266 261.13);
+    --border: oklch(0.5292 0.1428 47.06);
+}
