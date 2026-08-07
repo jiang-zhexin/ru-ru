@@ -61,44 +61,50 @@
 <fieldset class="border-l-2 p-2">
     <legend>{legend}</legend>
 
-    <ul class="flex flex-col gap-2 text-sm">
-        <li class="flex items-center gap-1">
-            <label class="cursor-pointer px-2 py-1 whitespace-nowrap bg-muted">
-                <input
-                    type="checkbox"
-                    bind:checked={draftMode}
-                    class="peer sr-only"
-                />
-                {draftMode ? "排除" : "包括"}
-            </label>
-
-            {#if types}
-                <select
-                    class="h-7 w-14 bg-muted outline-none"
-                    bind:value={draftType}
-                >
-                    {#each ["suffix", "full", "keyword", "regexp"] as t}
-                        <option value={t}>{t}</option>
-                    {/each}
-                </select>
-            {/if}
-
+    <form
+        class="flex items-center gap-1 pb-2 text-sm"
+        onsubmit={(e) => {
+            e.preventDefault();
+            commit();
+        }}
+    >
+        <label class="py-1 cursor-pointer px-2 whitespace-nowrap bg-muted">
             <input
-                bind:value={draftValue}
-                list={id}
-                placeholder="Enter 以添加"
-                class="flex-1 border-b p-1 outline-none placeholder:text-xs"
-                onkeydown={onKeydown}
+                type="checkbox"
+                bind:checked={draftMode}
+                class="peer sr-only"
             />
-            {#if datalist}
-                <datalist {id}>
-                    {#each datalist as dl}
-                        <option value={dl}></option>
-                    {/each}
-                </datalist>
-            {/if}
-        </li>
+            {draftMode ? "排除" : "包括"}
+        </label>
 
+        {#if types}
+            <select
+                class="h-7 w-14 bg-muted outline-none"
+                bind:value={draftType}
+            >
+                {#each ["suffix", "full", "keyword", "regexp"] as t}
+                    <option value={t}>{t}</option>
+                {/each}
+            </select>
+        {/if}
+
+        <input
+            bind:value={draftValue}
+            list={id}
+            placeholder="Enter 以添加"
+            class="flex-1 border-b p-1 outline-none placeholder:text-xs"
+        />
+    </form>
+
+    {#if datalist}
+        <datalist {id}>
+            {#each datalist as dl}
+                <option value={dl}></option>
+            {/each}
+        </datalist>
+    {/if}
+
+    <ul class="flex flex-col gap-2 text-sm">
         {#if !types}
             <Entry bind:entries={params.t} name={"包括"} />
             <Entry bind:entries={params.et!} name={"排除"} />
