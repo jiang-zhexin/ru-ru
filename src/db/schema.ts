@@ -1,5 +1,6 @@
 import {
   bytea,
+  index,
   integer,
   pgEnum,
   pgTable,
@@ -23,6 +24,8 @@ export const geositeTable = pgTable(
   },
   (table) => [
     primaryKey({ columns: [table.tag, table.format, table.domain] }),
+    index("geosite_tag_idx").on(table.tag),
+    index("geosite_domain_idx").on(table.domain),
   ],
 );
 
