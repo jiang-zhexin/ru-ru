@@ -1,7 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import EntryList from "./EntryList.svelte";
-    import MutableSelect from "./MutableSelect.svelte";
     import { DEFAULT_PARAMS, type Params } from "../lib/params";
     import { client } from "../lib/client";
 
@@ -20,14 +19,40 @@
         const resp = await client.tags.$get();
         if (resp.ok) suggestions = await resp.json();
     });
+
+    $effect(() => {
+        if (paramarray.length === 0)
+            cursor = paramarray.push(structuredClone(DEFAULT_PARAMS)) - 1;
+    });
 </script>
 
-<MutableSelect
-    bind:values={paramarray}
-    bind:cursor
-    draftValue={structuredClone(DEFAULT_PARAMS)}
-    addInfo="新建配置"
-/>
+<div class="flex gap-1">
+    <select
+        class="min-h-8 w-full pl-1 sm:text-sm focus:outline-none bg-muted"
+        value={cursor}
+        onchange={(e) => {
+            const c = Number(e.currentTarget.value);
+            if (c === -1) {
+                cursor = paramarray.push(structuredClone(DEFAULT_PARAMS)) - 1;
+            } else {
+                cursor = c;
+            }
+        }}
+    >
+        {#each paramarray.entries() as [c, v]}
+            <option value={c}>{`${v.name}`}</option>
+        {/each}
+        <option value={-1}> + 新建配置 </option>
+    </select>
+
+    <button
+        type="button"
+        class="w-1/4 cursor-pointer py-1 bg-accent transition-colors duration-150 text-xs"
+        popovertarget="deletePopover"
+    >
+        删除
+    </button>
+</div>
 
 <fieldset class="border-l-2 p-2">
     <legend class="flex items-center justify-between">
@@ -35,8 +60,7 @@
     </legend>
     <div class="flex items-start gap-2">
         <input
-            value={params.name}
-            onchange={(e) => (params.name = e.currentTarget.value)}
+            bind:value={params.name}
             class="p-1 w-full text-sm outline-none border-b"
             required
         />
