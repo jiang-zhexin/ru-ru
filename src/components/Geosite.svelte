@@ -1,15 +1,11 @@
 <script lang="ts">
     import type { RawDomain } from "@/types/geosite.ts";
-    import FilterForm from "../components/FilterForm.svelte";
-    import PreviewTable from "../components/PreviewTable.svelte";
-    import UrlDisplay from "../components/UrlDisplay.svelte";
-    import {
-        DEFAULT_PARAMS,
-        filterParams,
-        type Params,
-    } from "../lib/params.ts";
-    import { loadState } from "../lib/storage.ts";
-    import { client, defaultUrl } from "../lib/client.ts";
+    import FilterForm from "@/components/FilterForm.svelte";
+    import PreviewTable from "@/components/PreviewTable.svelte";
+    import UrlDisplay from "@/components/UrlDisplay.svelte";
+    import { DEFAULT_PARAMS, filterParams } from "@/lib/params.ts";
+    import { loadState } from "@/lib/storage.ts";
+    import { client, defaultUrl } from "@/lib/client.ts";
 
     const geositeState = "geosite";
     let { paramarray, cursor } = $state(

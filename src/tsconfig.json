@@ -1,8 +1,0 @@
-{
-  "extends": "../tsconfig.base.json",
-  "compilerOptions": {
-    "types": ["../worker-configuration.d.ts"],
-    "paths": { "@/*": ["./*"] },
-  },
-  "include": ["./**/*.ts", "../worker-configuration.d.ts"],
-}

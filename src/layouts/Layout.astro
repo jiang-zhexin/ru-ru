@@ -1,0 +1,30 @@
+---
+import "@/styles/global.css";
+import Header from "@/components/Header.astro";
+---
+
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>るーる</title>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" href="/favicon.ico" />
+    </head>
+    <body
+        class="h-screen flex flex-col p-3 gap-4 max-w-7xl mx-auto bg-background text-foreground transition-colors"
+    >
+        <Header />
+        <slot />
+    </body>
+</html>
+
+<script is:inline>
+    document.documentElement.classList.toggle(
+        "dark",
+        localStorage.theme === "dark" ||
+            (localStorage.theme === undefined &&
+                globalThis.matchMedia("(prefers-color-scheme: dark)").matches),
+    );
+</script>

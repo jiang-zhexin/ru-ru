@@ -1,9 +1,8 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "ru-ru",
-  "main": "src/index.ts",
-  "compatibility_date": "2026-06-16",
-  "compatibility_flags": ["nodejs_compat"],
+  "main": "./src/workers.ts",
+  "compatibility_date": "2026-08-04",
   "workers_dev": false,
   "placement": {
     "region": "aws:ap-southeast-1",
@@ -19,8 +18,7 @@
   },
   "assets": {
     "directory": "dist",
-    "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*"],
+    "html_handling": "drop-trailing-slash",
   },
   "hyperdrive": [
     {

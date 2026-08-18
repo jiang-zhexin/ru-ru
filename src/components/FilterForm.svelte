@@ -1,8 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import EntryList from "./EntryList.svelte";
-    import { DEFAULT_PARAMS, type Params } from "../lib/params";
-    import { client } from "../lib/client";
+    import { DEFAULT_PARAMS, type Params } from "@/lib/params";
+    import { client } from "@/lib/client";
 
     let {
         paramarray = $bindable(),

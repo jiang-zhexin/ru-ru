@@ -4,12 +4,14 @@ import { Hono } from "hono";
 import { cache } from "hono/cache";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
+import type { APIRoute } from "astro";
 
-const api = new Hono();
+const api = new Hono().basePath("/api");
 
-if (env.DEV) api.use(logger());
-
-api.use(prettyJSON({ force: env.DEV ? true : false }));
+if (import.meta.env.DEV) {
+  api.use(logger());
+  api.use(prettyJSON({ force: true }));
+}
 
 api.use(
   cache({
@@ -20,4 +22,6 @@ api.use(
 
 api.route("/v1", v1);
 
-export default api;
+export const ALL: APIRoute = (c) =>
+  api.fetch(c.request, env, c.locals.cfContext);
+export const prerender = false;

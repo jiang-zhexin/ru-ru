@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Format } from "@/types/geosite.ts";
-    import type { Params } from "../lib/params";
+    import type { Params } from "@/lib/params";
     import Entry from "./Entry.svelte";
 
     let {
